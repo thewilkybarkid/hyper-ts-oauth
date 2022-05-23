@@ -6,13 +6,23 @@ import { Headers, createRequest, createResponse } from 'node-mocks-http'
 
 export * from 'fast-check'
 
-export const url = (): fc.Arbitrary<URL> => fc.webUrl().map(url => new URL(url))
+export const url = ({ query }: { query?: fc.Arbitrary<URLSearchParams> } = {}): fc.Arbitrary<URL> =>
+  fc.tuple(fc.webUrl(), query ?? fc.constant(undefined)).map(([base, search]) => {
+    const url = new URL(base)
+    if (search) {
+      url.search = search?.toString()
+    }
+    return url
+  })
 
-export const request = ({ headers }: { headers?: fc.Arbitrary<Headers> } = {}): fc.Arbitrary<Request> =>
+export const request = ({
+  headers,
+  url,
+}: { headers?: fc.Arbitrary<Headers>; url?: fc.Arbitrary<URL> } = {}): fc.Arbitrary<Request> =>
   fc
     .record({
       headers: headers ?? fc.constant({}),
-      url: fc.webUrl(),
+      url: url ? url.map(String) : fc.webUrl(),
     })
     .map(createRequest)
 
