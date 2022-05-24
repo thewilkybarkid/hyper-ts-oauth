@@ -65,9 +65,7 @@ describe('hyper-ts-oauth', () => {
       test('exchanges the code for an access token', async () => {
         await fc.assert(
           fc.asyncProperty(
-            fc.record({
-              code: fc.string(),
-            }),
+            fc.string(),
             fc.record({
               authorizeUrl: fc.url(),
               clientId: fc.string(),
@@ -93,7 +91,7 @@ describe('hyper-ts-oauth', () => {
                         client_secret: oauth.clientSecret,
                         grant_type: 'authorization_code',
                         redirect_uri: oauth.redirectUri.href,
-                        ...code,
+                        code,
                       }).toString(),
                     headers: {
                       'Content-Type': MediaType.applicationFormURLEncoded,
@@ -115,9 +113,7 @@ describe('hyper-ts-oauth', () => {
       test('when the token API returns an access token with other details', async () => {
         await fc.assert(
           fc.asyncProperty(
-            fc.record({
-              code: fc.string(),
-            }),
+            fc.string(),
             fc.record({
               authorizeUrl: fc.url(),
               clientId: fc.string(),
@@ -148,7 +144,7 @@ describe('hyper-ts-oauth', () => {
                         client_secret: oauth.clientSecret,
                         grant_type: 'authorization_code',
                         redirect_uri: oauth.redirectUri.href,
-                        ...code,
+                        code,
                       }).toString(),
                     headers: {
                       'Content-Type': MediaType.applicationFormURLEncoded,
@@ -170,9 +166,7 @@ describe('hyper-ts-oauth', () => {
       test('when the token API does not return a valid access token', async () => {
         await fc.assert(
           fc.asyncProperty(
-            fc.record({
-              code: fc.string(),
-            }),
+            fc.string(),
             fc.record({
               authorizeUrl: fc.url(),
               clientId: fc.string(),
@@ -195,7 +189,7 @@ describe('hyper-ts-oauth', () => {
                         client_secret: oauth.clientSecret,
                         grant_type: 'authorization_code',
                         redirect_uri: oauth.redirectUri.href,
-                        ...code,
+                        code,
                       }).toString(),
                     headers: {
                       'Content-Type': MediaType.applicationFormURLEncoded,
@@ -218,9 +212,7 @@ describe('hyper-ts-oauth', () => {
     test('when the token API is unavailable', async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.record({
-            code: fc.string(),
-          }),
+          fc.string(),
           fc.record({
             authorizeUrl: fc.url(),
             clientId: fc.string(),
@@ -246,7 +238,7 @@ describe('hyper-ts-oauth', () => {
                       client_secret: oauth.clientSecret,
                       grant_type: 'authorization_code',
                       redirect_uri: oauth.redirectUri.href,
-                      ...code,
+                      code,
                     }).toString(),
                   headers: {
                     'Content-Type': MediaType.applicationFormURLEncoded,

@@ -7,14 +7,12 @@ import * as D from 'io-ts/Decoder'
 import * as _ from '../src'
 
 import AccessToken = _.AccessToken
-import AuthorizationCode = _.AuthorizationCode
 import Decoder = D.Decoder
 import ReaderMiddleware = RM.ReaderMiddleware
 import ReaderTaskEither = RTE.ReaderTaskEither
 import OAuthEnv = _.OAuthEnv
 
 declare const accessToken: AccessToken
-declare const authorizationCode: AuthorizationCode
 declare const oAuthEnv: OAuthEnv
 declare const string: string
 declare const decoder: Decoder<unknown, { name: string }>
@@ -37,12 +35,6 @@ expectTypeOf(accessToken.access_token).toEqualTypeOf<string>()
 expectTypeOf(accessToken.token_type).toEqualTypeOf<string>()
 
 //
-// AuthorizationCode
-//
-
-expectTypeOf(authorizationCode.code).toEqualTypeOf<string>()
-
-//
 // requestAuthorizationCode
 //
 
@@ -57,9 +49,9 @@ expectTypeOf(_.requestAuthorizationCode(string)(string)).toMatchTypeOf<
 // exchangeAuthorizationCode
 //
 
-expectTypeOf(_.exchangeAuthorizationCode()(authorizationCode)).toMatchTypeOf<
+expectTypeOf(_.exchangeAuthorizationCode()(string)).toMatchTypeOf<
   ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken>
 >()
-expectTypeOf(_.exchangeAuthorizationCode(decoder)(authorizationCode)).toMatchTypeOf<
+expectTypeOf(_.exchangeAuthorizationCode(decoder)(string)).toMatchTypeOf<
   ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & { name: string }>
 >()

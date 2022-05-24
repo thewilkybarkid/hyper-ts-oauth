@@ -40,14 +40,6 @@ export interface OAuthEnv {
  * @category model
  * @since 0.1.0
  */
-export interface AuthorizationCode {
-  readonly code: string
-}
-
-/**
- * @category model
- * @since 0.1.0
- */
 export interface AccessToken {
   readonly access_token: string
   readonly token_type: string
@@ -83,12 +75,12 @@ export function requestAuthorizationCode(
  */
 export function exchangeAuthorizationCode<A>(
   decoder: Decoder<JsonRecord, A>,
-): (code: AuthorizationCode) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & A>
+): (code: string) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & A>
 export function exchangeAuthorizationCode(): (
-  code: AuthorizationCode,
+  code: string,
 ) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken>
 export function exchangeAuthorizationCode(decoder: Decoder<JsonRecord, unknown> = D.struct({})) {
-  return (code: AuthorizationCode) =>
+  return (code: string) =>
     pipe(
       RTE.asks(({ oauth: { clientId, clientSecret, redirectUri, tokenUrl } }: OAuthEnv) =>
         pipe(
@@ -99,7 +91,7 @@ export function exchangeAuthorizationCode(decoder: Decoder<JsonRecord, unknown> 
               client_secret: clientSecret,
               grant_type: 'authorization_code',
               redirect_uri: redirectUri.href,
-              code: code.code,
+              code,
             }).toString(),
             MediaType.applicationFormURLEncoded,
           ),

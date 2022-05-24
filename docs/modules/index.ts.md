@@ -17,7 +17,6 @@ Added in v0.1.0
   - [requestAuthorizationCode](#requestauthorizationcode)
 - [model](#model)
   - [AccessToken (interface)](#accesstoken-interface)
-  - [AuthorizationCode (interface)](#authorizationcode-interface)
   - [OAuthEnv (interface)](#oauthenv-interface)
 
 ---
@@ -33,9 +32,9 @@ Exchange an authorization code for an access token.
 ```ts
 export declare function exchangeAuthorizationCode<A>(
   decoder: Decoder<JsonRecord, A>
-): (code: AuthorizationCode) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & A>
+): (code: string) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & A>
 export declare function exchangeAuthorizationCode(): (
-  code: AuthorizationCode
+  code: string
 ) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken>
 ```
 
@@ -65,18 +64,6 @@ Added in v0.1.0
 export interface AccessToken {
   readonly access_token: string
   readonly token_type: string
-}
-```
-
-Added in v0.1.0
-
-## AuthorizationCode (interface)
-
-**Signature**
-
-```ts
-export interface AuthorizationCode {
-  readonly code: string
 }
 ```
 
