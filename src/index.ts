@@ -65,13 +65,14 @@ export interface AccessToken {
  */
 export function requestAuthorizationCode(
   scope: string,
-): ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void> {
-  return pipe(
-    RM.rightReader(authorizationRequestUrl(scope)),
-    RM.ichainW(RM.redirect),
-    RM.ichain(() => RM.closeHeaders()),
-    RM.ichain(() => RM.end()),
-  )
+): (state?: string) => ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void> {
+  return state =>
+    pipe(
+      RM.rightReader(authorizationRequestUrl(scope, state)),
+      RM.ichainW(RM.redirect),
+      RM.ichain(() => RM.closeHeaders()),
+      RM.ichain(() => RM.end()),
+    )
 }
 
 /**
@@ -138,17 +139,19 @@ const AccessTokenD: Decoder<unknown, AccessToken> = D.struct({
 // utils
 // -------------------------------------------------------------------------------------
 
-function authorizationRequestUrl(scope: string): Reader<OAuthEnv, URL> {
-  return R.asks(
-    ({ oauth: { authorizeUrl, clientId, redirectUri } }) =>
-      new URL(
-        `?${new URLSearchParams({
-          client_id: clientId,
-          response_type: 'code',
-          redirect_uri: redirectUri.href,
-          scope,
-        }).toString()}`,
-        authorizeUrl,
-      ),
-  )
+function authorizationRequestUrl(scope: string, state?: string): Reader<OAuthEnv, URL> {
+  return R.asks(({ oauth: { authorizeUrl, clientId, redirectUri } }) => {
+    const query = new URLSearchParams({
+      client_id: clientId,
+      response_type: 'code',
+      redirect_uri: redirectUri.href,
+      scope,
+    })
+
+    if (typeof state === 'string') {
+      query.set('state', state)
+    }
+
+    return new URL(`?${query.toString()}`, authorizeUrl)
+  })
 }

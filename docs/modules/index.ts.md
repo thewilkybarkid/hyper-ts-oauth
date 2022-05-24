@@ -50,7 +50,7 @@ Returns a middleware that requests authorization from the user.
 ```ts
 export declare function requestAuthorizationCode(
   scope: string
-): ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void>
+): (state?: string) => ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void>
 ```
 
 Added in v0.1.0

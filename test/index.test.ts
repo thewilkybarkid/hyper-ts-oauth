@@ -19,9 +19,18 @@ describe('hyper-ts-oauth', () => {
             redirectUri: fc.url(),
             tokenUrl: fc.url(),
           }),
-          fc.string(),
-          async (connection, oauth, scope) => {
-            const actual = await runMiddleware(_.requestAuthorizationCode(scope)({ oauth }), connection)()
+          fc.record(
+            {
+              scope: fc.string(),
+              state: fc.string(),
+            },
+            { requiredKeys: ['scope'] },
+          ),
+          async (connection, oauth, params) => {
+            const actual = await runMiddleware(
+              _.requestAuthorizationCode(params.scope)(params.state)({ oauth }),
+              connection,
+            )()
 
             expect(actual).toStrictEqual(
               E.right([
@@ -37,7 +46,7 @@ describe('hyper-ts-oauth', () => {
                       client_id: oauth.clientId,
                       response_type: 'code',
                       redirect_uri: oauth.redirectUri.href,
-                      scope,
+                      ...params,
                     }).toString()}`,
                     oauth.authorizeUrl,
                   ).href,

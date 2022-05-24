@@ -46,7 +46,10 @@ expectTypeOf(authorizationCode.code).toEqualTypeOf<string>()
 // requestAuthorizationCode
 //
 
-expectTypeOf(_.requestAuthorizationCode(string)).toMatchTypeOf<
+expectTypeOf(_.requestAuthorizationCode(string)()).toMatchTypeOf<
+  ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void>
+>()
+expectTypeOf(_.requestAuthorizationCode(string)(string)).toMatchTypeOf<
   ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void>
 >()
 
