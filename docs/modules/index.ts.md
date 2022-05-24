@@ -31,9 +31,12 @@ Exchange an authorization code for an access token.
 **Signature**
 
 ```ts
-export declare function exchangeAuthorizationCode(
+export declare function exchangeAuthorizationCode<A>(
+  decoder: Decoder<JsonRecord, A>
+): (code: AuthorizationCode) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & A>
+export declare function exchangeAuthorizationCode(): (
   code: AuthorizationCode
-): RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken>
+) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken>
 ```
 
 Added in v0.1.0

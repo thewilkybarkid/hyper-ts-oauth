@@ -1,6 +1,7 @@
 import fetchMock from 'fetch-mock'
 import * as E from 'fp-ts/Either'
 import { MediaType, Status } from 'hyper-ts'
+import * as D from 'io-ts/Decoder'
 import * as _ from '../src'
 import * as fc from './fc'
 import { runMiddleware } from './middleware'
@@ -71,7 +72,62 @@ describe('hyper-ts-oauth', () => {
             }),
             fc.string(),
             async (code, oauth, accessToken) => {
-              const actual = await _.exchangeAuthorizationCode(code)({
+              const actual = await _.exchangeAuthorizationCode()(code)({
+                oauth,
+                fetch: fetchMock.sandbox().postOnce(
+                  {
+                    url: oauth.tokenUrl.href,
+                    functionMatcher: (_, req: RequestInit) =>
+                      req.body ===
+                      new URLSearchParams({
+                        client_id: oauth.clientId,
+                        client_secret: oauth.clientSecret,
+                        grant_type: 'authorization_code',
+                        redirect_uri: oauth.redirectUri.href,
+                        ...code,
+                      }).toString(),
+                    headers: {
+                      'Content-Type': MediaType.applicationFormURLEncoded,
+                    },
+                  },
+                  {
+                    status: Status.OK,
+                    body: accessToken,
+                  },
+                ),
+              })()
+
+              expect(actual).toStrictEqual(E.right(accessToken))
+            },
+          ),
+        )
+      })
+
+      test('when the token API returns an access token with other details', async () => {
+        await fc.assert(
+          fc.asyncProperty(
+            fc.record({
+              code: fc.string(),
+            }),
+            fc.record({
+              authorizeUrl: fc.url(),
+              clientId: fc.string(),
+              clientSecret: fc.string(),
+              redirectUri: fc.url(),
+              tokenUrl: fc.url(),
+            }),
+            fc.record({
+              access_token: fc.string(),
+              token_type: fc.constant('Bearer'),
+              name: fc.string(),
+            }),
+            fc.string(),
+            async (code, oauth, accessToken) => {
+              const actual = await _.exchangeAuthorizationCode(
+                D.struct({
+                  name: D.string,
+                }),
+              )(code)({
                 oauth,
                 fetch: fetchMock.sandbox().postOnce(
                   {
@@ -118,7 +174,7 @@ describe('hyper-ts-oauth', () => {
             fc.jsonValue(),
             fc.string(),
             async (code, oauth, body) => {
-              const actual = await _.exchangeAuthorizationCode(code)({
+              const actual = await _.exchangeAuthorizationCode()(code)({
                 oauth,
                 fetch: fetchMock.sandbox().postOnce(
                   {
@@ -169,7 +225,7 @@ describe('hyper-ts-oauth', () => {
           }),
           fc.string(),
           async (code, oauth, accessToken) => {
-            const actual = await _.exchangeAuthorizationCode(code)({
+            const actual = await _.exchangeAuthorizationCode()(code)({
               oauth,
               fetch: fetchMock.sandbox().postOnce(
                 {

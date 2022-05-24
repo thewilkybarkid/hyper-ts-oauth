@@ -80,29 +80,34 @@ export function requestAuthorizationCode(
  * @category constructors
  * @since 0.1.0
  */
-export function exchangeAuthorizationCode(
+export function exchangeAuthorizationCode<A>(
+  decoder: Decoder<JsonRecord, A>,
+): (code: AuthorizationCode) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken & A>
+export function exchangeAuthorizationCode(): (
   code: AuthorizationCode,
-): RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken> {
-  return pipe(
-    RTE.asks(({ oauth: { clientId, clientSecret, redirectUri, tokenUrl } }: OAuthEnv) =>
-      pipe(
-        F.Request('POST')(tokenUrl),
-        F.setBody(
-          new URLSearchParams({
-            client_id: clientId,
-            client_secret: clientSecret,
-            grant_type: 'authorization_code',
-            redirect_uri: redirectUri.href,
-            code: code.code,
-          }).toString(),
-          MediaType.applicationFormURLEncoded,
+) => RTE.ReaderTaskEither<OAuthEnv & FetchEnv, unknown, AccessToken>
+export function exchangeAuthorizationCode(decoder: Decoder<JsonRecord, unknown> = D.struct({})) {
+  return (code: AuthorizationCode) =>
+    pipe(
+      RTE.asks(({ oauth: { clientId, clientSecret, redirectUri, tokenUrl } }: OAuthEnv) =>
+        pipe(
+          F.Request('POST')(tokenUrl),
+          F.setBody(
+            new URLSearchParams({
+              client_id: clientId,
+              client_secret: clientSecret,
+              grant_type: 'authorization_code',
+              redirect_uri: redirectUri.href,
+              code: code.code,
+            }).toString(),
+            MediaType.applicationFormURLEncoded,
+          ),
         ),
       ),
-    ),
-    RTE.chainW(F.send),
-    RTE.filterOrElseW(F.hasStatus(Status.OK), identity),
-    RTE.chainTaskEitherKW(F.decode(pipe(JsonRecordD, D.compose(AccessTokenD)))),
-  )
+      RTE.chainW(F.send),
+      RTE.filterOrElseW(F.hasStatus(Status.OK), identity),
+      RTE.chainTaskEitherKW(F.decode(pipe(JsonRecordD, D.compose(pipe(AccessTokenD, D.intersect(decoder)))))),
+    )
 }
 
 // -------------------------------------------------------------------------------------
