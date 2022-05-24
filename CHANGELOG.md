@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/thewilkybarkid/hyper-ts-oauth/compare/v0.1.0...v0.1.1) (2022-05-24)
+
+
+### Features
+
+* add state to the authorization request ([f5e954e](https://github.com/thewilkybarkid/hyper-ts-oauth/commit/f5e954e76a87bd5ad6482bca7ae99bdf76b4e00b))
+* decoder other details in the access token response ([3efd1ad](https://github.com/thewilkybarkid/hyper-ts-oauth/commit/3efd1adf5833fd3dc4723f981e70afc340138960))
+* simplify authorization code type ([37ca0c6](https://github.com/thewilkybarkid/hyper-ts-oauth/commit/37ca0c6a840618e0f912605b617a1e30ab31d1d8))
+
 ## 0.1.0 (2022-05-23)
 
 
