@@ -75,12 +75,12 @@ Added in v0.1.0
 
 ```ts
 export interface OAuthEnv {
-  oauth: {
-    authorizeUrl: URL
-    clientId: string
-    clientSecret: string
-    redirectUri: URL
-    tokenUrl: URL
+  readonly oauth: {
+    readonly authorizeUrl: URL
+    readonly clientId: string
+    readonly clientSecret: string
+    readonly redirectUri: URL
+    readonly tokenUrl: URL
   }
 }
 ```

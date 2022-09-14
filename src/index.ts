@@ -27,12 +27,12 @@ import ReaderMiddleware = RM.ReaderMiddleware
  * @since 0.1.0
  */
 export interface OAuthEnv {
-  oauth: {
-    authorizeUrl: URL
-    clientId: string
-    clientSecret: string
-    redirectUri: URL
-    tokenUrl: URL
+  readonly oauth: {
+    readonly authorizeUrl: URL
+    readonly clientId: string
+    readonly clientSecret: string
+    readonly redirectUri: URL
+    readonly tokenUrl: URL
   }
 }
 
