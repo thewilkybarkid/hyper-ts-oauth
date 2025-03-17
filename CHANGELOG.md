@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/thewilkybarkid/hyper-ts-oauth/compare/v0.1.1...v0.1.2) (2025-03-17)
+
+
+### Features
+
+* allow arbitrary parameters ([24b9439](https://github.com/thewilkybarkid/hyper-ts-oauth/commit/24b9439b7309be79ef435fdb6b78b8fac789c0ae))
+
+
+### Bug Fixes
+
+* make the environment immutable ([0380646](https://github.com/thewilkybarkid/hyper-ts-oauth/commit/0380646831742ad47bbfe3ac1a8a5c7df013a1a0))
+
 ### [0.1.1](https://github.com/thewilkybarkid/hyper-ts-oauth/compare/v0.1.0...v0.1.1) (2022-05-24)
 
 

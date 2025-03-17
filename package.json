@@ -1,7 +1,7 @@
 {
   "name": "hyper-ts-oauth",
   "description": "hyper-ts middleware for OAuth 2.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "homepage": "https://github.com/thewilkybarkid/hyper-ts-oauth",
   "repository": "github:thewilkybarkid/hyper-ts-oauth",
