@@ -19,16 +19,21 @@ describe('hyper-ts-oauth', () => {
             redirectUri: fc.url(),
             tokenUrl: fc.url(),
           }),
-          fc.record(
-            {
-              scope: fc.string(),
-              state: fc.string(),
-            },
-            { requiredKeys: ['scope'] },
-          ),
-          async (connection, oauth, params) => {
+          fc
+            .tuple(
+              fc.record(
+                {
+                  scope: fc.string(),
+                  state: fc.string(),
+                },
+                { requiredKeys: ['scope'] },
+              ),
+              fc.dictionary(fc.string({ minLength: 1 }), fc.string({ minLength: 1 })),
+            )
+            .map(([one, two]) => ({ ...two, ...one } as Record<string, string>)),
+          async (connection, oauth, { scope, state, ...options }) => {
             const actual = await runMiddleware(
-              _.requestAuthorizationCode(params.scope)(params.state)({ oauth }),
+              _.requestAuthorizationCode(scope)(state, options)({ oauth }),
               connection,
             )()
 
@@ -43,10 +48,12 @@ describe('hyper-ts-oauth', () => {
                   name: 'Location',
                   value: new URL(
                     `?${new URLSearchParams({
+                      ...options,
                       client_id: oauth.clientId,
                       response_type: 'code',
                       redirect_uri: oauth.redirectUri.href,
-                      ...params,
+                      scope,
+                      ...(typeof state === 'string' ? { state } : {}),
                     }).toString()}`,
                     oauth.authorizeUrl,
                   ).href,

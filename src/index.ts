@@ -57,10 +57,13 @@ export interface AccessToken {
  */
 export function requestAuthorizationCode(
   scope: string,
-): (state?: string) => ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void> {
-  return state =>
+): (
+  state?: string,
+  options?: Record<string, string>,
+) => ReaderMiddleware<OAuthEnv, StatusOpen, ResponseEnded, never, void> {
+  return (state, options) =>
     pipe(
-      RM.rightReader(authorizationRequestUrl(scope, state)),
+      RM.rightReader(authorizationRequestUrl(scope, state, options)),
       RM.ichainW(RM.redirect),
       RM.ichain(() => RM.closeHeaders()),
       RM.ichain(() => RM.end()),
@@ -131,9 +134,14 @@ const AccessTokenD: Decoder<unknown, AccessToken> = D.struct({
 // utils
 // -------------------------------------------------------------------------------------
 
-function authorizationRequestUrl(scope: string, state?: string): Reader<OAuthEnv, URL> {
+function authorizationRequestUrl(
+  scope: string,
+  state?: string,
+  options: Record<string, string> = {},
+): Reader<OAuthEnv, URL> {
   return R.asks(({ oauth: { authorizeUrl, clientId, redirectUri } }) => {
     const query = new URLSearchParams({
+      ...options,
       client_id: clientId,
       response_type: 'code',
       redirect_uri: redirectUri.href,
